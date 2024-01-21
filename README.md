@@ -51,7 +51,7 @@ https://file.miuser.net/?dir=/Luat/basic
 
 一、安装驱动和LuattoolsV2，并完成自动在线更新
 
-https://luatos.com/luatools/download/last
+http://luatos.com/luatools/download/last
 
 二、选择合宙底包，并烧写midemo开源代码,步骤如下
 
