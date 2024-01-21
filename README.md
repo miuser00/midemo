@@ -30,12 +30,9 @@ midemo 计划用一组极简单的AT增强指令，简化现有的物联网模�
 
 Midemo适用于合宙出品全系列Cat1模块，支持该模块的核心板，开发板，以及各类定制产品。代码通过Luatools烧写
 
-![](https://miuser.net/ftp/2021-08-07_03-02-00/images/pbdefine.jpg)
-
-
 推荐使用开源电话核心板Cat1 Phone Core 作为硬件平台，项目地址：https://www.oshwhub.com/miuser/elderphonev2-schdoc
-成品核心板也已经面世。欢迎购买！稳定、开源，量大价格从优，购买地址: https://item.taobao.com/item.htm?id=624610770134
 
+![](images/pbdefine.jpg)
 ### 1.4 使用方法
 
 一、连接USB端口，安装好驱动程序，然后使用LuatoolsV2 将项目源码（midemo目录及子目录）全部烧写到目标的核心板。（商品板自带，不需要另外烧了）
@@ -54,6 +51,8 @@ https://file.miuser.net/?dir=/Luat/basic
 
 一、安装驱动和LuattoolsV2，并完成自动在线更新
 
+https://luatos.com/luatools/download/last
+
 二、选择合宙底包，并烧写midemo开源代码,步骤如下
 
 运行LuatoolsV2，并选择项目管理测试
@@ -62,7 +61,6 @@ https://file.miuser.net/?dir=/Luat/basic
 	选择底包和脚本
 	连接USB线并烧写
 
-![](https://miuser.net/ftp/2021-08-07_03-02-00/images/luatools.gif)
 
 ### 1.7 使用方法
 
@@ -442,10 +440,9 @@ HUNGUP
 拒接电话
 电话主动挂断并回显[onedial]DISCONNECTED
 
-### ttsplus模块
-功能：文本朗读，在官方库基础上增加了几个符号的朗读
-#### TTSPLUS,XXX 则朗读对应的XXX
-朗读完成后，系统会收到TTSPLUS,XXX->DONE的消息
+### tts模块
+功能：文本朗读
+#### TTS,XXX 则朗读对应的XXX
 使用TTS,XXX 则使用原生库朗读对应的XXX
 朗读完成后，系统会收到TTS,XXX->DONE的消息
 
