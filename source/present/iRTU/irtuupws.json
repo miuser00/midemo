@@ -1,0 +1,70 @@
+{
+    "fota": 0,
+    "uartReadTime": "25",
+    "flow": "",
+    "param_ver": "1",
+    "pwrmod": "normal",
+    "password": "",
+    "netReadTime": "0",
+    "passon": 1,
+    "nolog": "1",
+    "plate": 0,
+    "reg": 0,
+    "convert": 0,
+    "uconf": [
+        [],
+        []
+    ],
+    "conf": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+    ],
+    "preset": {
+        "number": "",
+        "delay": "",
+        "smsword": ""
+    },
+    "apn": [
+        "",
+        "",
+        ""
+    ],
+    "cmds": [
+        [],
+        []
+    ],
+    "pins":[],
+    "gps": {
+        "pio": [],
+        "fun": []
+    },
+    "upprot": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ],
+    "dwprot": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ],
+    "warn": {
+        "adc0": [],
+        "adc1": [],
+        "vbatt": [],
+        "gpio": []
+    }
+}

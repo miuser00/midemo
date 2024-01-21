@@ -1,0 +1,13 @@
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\obj\Debug\Air208Reader.csprojResolveAssemblyReference.cache
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\obj\Debug\Air208Reader.csproj.GenerateResource.Cache
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\bin\Debug\zxing.dll
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\bin\Debug\Air208Reader.exe.config
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\bin\Debug\Air208Reader.exe
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\bin\Debug\Air208Reader.pdb
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\obj\Debug\Air208Reader.Properties.Resources.resources
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\obj\Debug\Air208Reader.exe
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\obj\Debug\Air208Reader.pdb
+C:\Users\miuser\OneDrive\project\GPRS插座\Air208Reader\Air208Reader\obj\Debug\Air208Reader.Form1.resources
+C:\Users\miuser\OneDrive\project\GPRS插座\Software\Air208Reader\Air208Reader\bin\Debug\Air208Reader.exe.config
+C:\Users\miuser\OneDrive\project\GPRS插座\Software\Air208Reader\Air208Reader\obj\Debug\Air208Reader.exe
+C:\Users\miuser\OneDrive\project\GPRS插座\Software\Air208Reader\Air208Reader\obj\Debug\Air208Reader.pdb

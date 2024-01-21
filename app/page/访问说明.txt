@@ -1,0 +1,9 @@
+模块采用h5+JS方式编写，采用websocket通讯，文件需要安放在云服务器上的web目录，可以通过扫码或者手工输入地址使用：
+
+访问样例：http://box.miuser.net/page/01a.html?ID=1234567890&MM=1234567890ABCDEF
+
+http://box.miuser.net/page/01a.html 为存放本页面的云服务器地址
+ID为10位数字模块识别码
+MM为16位数字字模构成的通讯密码
+
+ID和MM可以通过扫描二维码获取，或者开机时从串口得到

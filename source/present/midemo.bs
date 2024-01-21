@@ -1,0 +1,197 @@
+--------------------------------------------------------------------------------------------------------------------------------------- 
+--版权声明：本demo集源于上海合宙官方技术团队的DEMO（MIT），并参考了合宙开源社区的众多大佬无私分享的代码，包括但不限于 稀饭放姜、Wendal、晨旭、陈夏等
+-- 目前参考到的开源项目有： iRTU（MIT)、LuatOS(MIT)、LLCOM
+-- 欲获取更多luat 代码请访问 doc.openluat.com
+-- 如果您觉得本demo集包含了未经由您授权的代码，请联系 64034373@qq.com，如有侵权嫌疑将立即纠正
+---------------------------------------------------------------------------------------------------------------------------------------
+--- 文件功能：核心板配置文件，用于设置初始化midemo的配置信息
+-- @author miuser
+-- @file midemo.bs
+-- @license MIT
+-- @copyright miuser@luat
+-- @release 2021-01-29
+--------------------------------------------------------------------------
+
+module("midemo",package.seeall)
+
+--------------------------------------------------------------------
+--                                                                 -
+--                    Cat1 Phone Core管脚说明                      -
+--                                                                 -
+--------------------------------------------------------------------
+-- 引脚		名称		功能
+-- B1		GND		    电源负极
+-- B2		4V IN		锂电池供电输入
+-- B3		5V IN		5V直流电源输入
+-- B4		UART1_TX	串口1发送 
+-- B5		UART1_RX	串口1接收 
+-- B6		GPIO19		双向输入输出IO
+-- B7		GPIO18		双向输入输出IO
+-- B8		VMMC		用作OLED显示屏供电
+-- B9		POWER ON	电源按键
+-- B10		UART2_TX	串口2发送
+-- B11		UART2_RX	串口2接收
+-- B12		GPIO13		不建议使用
+-- B13		1.8V OUT	1.8V供电输出
+-- B14		MIC+		麦克风正极
+-- B15		MIC-		麦克风负极
+-- B16		SPK-		喇叭负极
+-- B17		SPK+		喇叭正极
+-- A1		GND		    电源负极
+-- A2		SCL		    I2C总线时钟
+-- A3		SDA		    I2C总线数据
+-- A4		SPI_CS		SPI总线片选
+-- A5		SPI_CLK		SPI总线时钟
+-- A6		SPI_MOSI	SPI总线数据输出
+-- A7		SPI_MISO	SPI总线数据输入
+-- A8		GND		    显示屏供电负极
+-- A9		VLCD		显示屏供电正极
+-- A10		LCD_CK		显示屏时钟
+-- A11		LCD_DA		显示屏数据
+-- A12		LCD_RST		显示屏复位
+-- A13		LCD_DC		显示屏命令数据切换
+-- A14		LCD_CS		显示屏片选
+-- A15		ADC3		模拟输入3
+-- A16		ADC2		模拟输入2
+-- A17		GND		    电源负极
+-- C1		GND		    电源负极
+-- C2		D-		    USB差分数据负极
+-- C3		D+		    USB差分数据正极
+-- C4		UART3_TX	串口3发送
+-- C5		UART3_RX	串口3接收
+-- C6		5V IN		5V直流电源输入
+
+--------------------------------------------------------------------
+--                                                                 -
+--                           功能模块加载列表                       -
+--                                                                 -
+--------------------------------------------------------------------
+-- 可选的模组 "mconsole","com","irtu_init","default","irtu_over","upws","maliyun","mmqtt","oled","gpo","bio","btn","cmd","mkey","onedial","ttsplus","trsms","ws2812bmatrix","sht30","help","madc"
+--LOAD_MODULE={"mconsole","ledp","com","irtu_init","default","irtu_over","upws","maliyun","mmqtt","oled","gpo","bio","btn","cmd","mkey","onedial","ttsplus","trsms","ws2812bmatrix","sht30","help","madc","sdcard"}
+LOAD_MODULE={"irtu_init","default","irtu_over","mconsole","air153","ledp","com","upws","maliyun","mmqtt","oled","gpo","bio","btn","cmd","mkey","onedial","ttsplus","trsms","sht30","help","madc","timedtask","st7735"}
+
+--------------------------------------------------------------------
+--                                                                 -
+--                           云服务器配置表                         -
+--                                                                 -
+--------------------------------------------------------------------
+
+-- --UPWS连接 CHANNEL=1
+-- --UPWS服务器
+-- UPWS_SERVER="box.miuser.net"
+-- --UPWS UDP端口
+-- UPWS_PORT=7101
+
+ --MQTT服务 CHANNEL=2
+-- --MQTT服务器
+-- MQTT_SERVER="box.miuser.net"
+-- --MQTT TCP 端口
+-- MQTT_PORT=1883
+-- --使用MQTT.fx调试时调试软件上主题的末尾不加"/"，但此处应该加上
+-- --设备订阅的主题
+-- MQTT_subTopic="/server/"
+-- --设备发布的主题
+-- MQTT_pubTopic="/device/"
+
+-- --阿里云服务 CHANNEL=3
+-- --服务器Region
+-- RegionID="cn-shanghai"
+-- --产品ProductKey
+-- ProductKey="a18AEOym3ET"
+-- --项目AccessKey
+-- AccessKey="LTAI4GBhk4Wb2C71wwjgtcve"
+-- --项目AccessKeySecret
+-- AccessKeySecret="IrVCeGi9hXnQCNIeNUr0HRBrGuSBfV"
+-- --设备订阅的主题
+-- ALIYUN_subTopic="/sys/a18AEOym3ET/${deviceName}/thing/service/property/set"
+-- --设备发布的主题
+-- ALIYUN_pubTopic="/sys/a18AEOym3ET/${deviceName}/thing/event/property/post"
+
+-- --命令控制台映射模式 0，不映射 1，直接映射 2，映射为路由模式
+-- --MQTT映射为控制台的接口
+-- MTCP_OVER_MQTT=2
+-- --阿里云映射为控制台的接口
+-- MTCP_OVER_ALIYUN=2
+
+
+--------------------------------------------------------------------
+--                                                                 -
+--                           引脚配置表                             -
+--                                                                 -
+--------------------------------------------------------------------
+-- --将USB虚拟串口分配作为命令控制接口
+-- CONSOLE_UART_IDs={129}
+-- --MQTT映射到的硬件串口号
+-- MQTT_UART_IDs={1}
+-- --阿里云映射到的硬件串口号
+-- ALIYUN_UART_IDs={2}
+-- 独立硬件串口
+COM_UART_IDs={1,2,3}
+
+
+-- --GPIO13映射为双向IO端口
+BIOPins={13}
+-- --GPIOX为输出IO端口
+OUTPins={}
+-- --GPS功能使用的COM口号
+-- GPSCOM=1
+-- GPSBaudRate=9600
+-- --按钮功能，需要使用空白的GPIO口
+BTNPins={19,18}
+
+
+-- --将GPIOX作为电源指示灯,nil为无电源指示灯
+--  POWERLED=5
+-- --将GPIOX作为来电指示,nil为无来电指示灯
+--  PHONELED=5
+-- --将GPIOX作为状态指示灯,nil为无状态指示灯
+-- STATUSLED=1
+-- --将GPIOX作为SIM卡注册指示灯nil为无注册灯
+-- SIMLED=4
+
+-- 串口1,2,3对应的RS485方向引脚,指定GPIO11为串口3方向端
+-- RS485_OE={nil,nil,11}
+
+-- --看门狗输出Pin定义
+-- WDI=23
+
+
+--------------------------------------------------------------------
+--                                                                 -
+--                           引脚映射表                             -
+--                                                                 -
+--------------------------------------------------------------------
+-- MAP={}
+-- --核心板的B6引脚映射为GPIO19
+-- MAP["B6"]="19"
+-- --核心板的B7引脚映射为GPIO18
+-- MAP["B7"]="18"
+-- --核心板的B12引脚映射为GPIO13，这个引脚为内置LED使用
+-- MAP["B12"]="13"
+
+--------------------------------------------------------------------
+--                                                                 -
+--                      引脚电压域 输出电压设置                      -
+--                                                                 -
+--------------------------------------------------------------------
+-- --VLCD电压为3.2V
+ VLCD=15
+-- --VMMC电压为1.8V
+ VMMC=2
+-- -- PMD=0时：关闭LDO
+-- -- PMD=1时：LDO输出1.7V
+-- -- PMD=2时：LDO输出1.8V
+-- -- PMD=3时：LDO输出1.9V
+-- -- PMD=4时：LDO输出2.0V
+-- -- PMD=5时：LDO输出2.2V
+-- -- PMD=6时：LDO输出2.3V
+-- -- PMD=7时：LDO输出2.4V
+-- -- PMD=8时：LDO输出2.5V
+-- -- PMD=9时：LDO输出2.6V
+-- -- PMD=10时：LDO输出2.7V
+-- -- PMD=11时：LDO输出2.8V
+-- -- PMD=12时：LDO输出2.9V
+-- -- PMD=13时：LDO输出3.0V
+-- -- PMD=14时：LDO输出3.1V
+-- -- PMD=15时：LDO输出3.2V
+

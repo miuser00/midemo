@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title >YAP Controller</title>
+
+	<!--开关-->
+  	<link rel="stylesheet" href="css/normalize.min.css">
+  	<link rel="stylesheet" href="css/style.css">
+	<!--按钮-->
+	<link rel="stylesheet" href="css/playground.css">
+	<!--Websocket-->
+	<SCRIPT src="./main/jquery-1.8.3.min.js"></SCRIPT>
+	<script src="./main/reconnecting-websocket.min.js" ></script>
+	<!--测量表-->
+	<SCRIPT src="main/JustGage.js"></SCRIPT>
+
+
+</head>
+<body>
+<h1><div align="center" id="hh" >YAP Controller</div><a href="www.miuser.net" target="blank"></a></h1>
+		
+<!--		<div class="toggle toggle&#45;&#45;knob">-->
+<!--			&lt;!&ndash;电源开关&ndash;&gt;-->
+<!--			<input type="checkbox" checked onclick="setSwitch()" id="toggle&#45;&#45;knob" class="toggle&#45;&#45;checkbox">-->
+<!--			<label class="toggle&#45;&#45;btn" for="toggle&#45;&#45;knob"><span class="toggle&#45;&#45;feature" data-label-on="on"  data-label-off="off"></span></label>-->
+<!--		</div>-->
+        <div>
+            <h2></h2>
+        </div>
+		<div style="text-align:center;clear:both">
+			<div class="wall-of-buttons">
+				<a class="large white button" onclick="press('1');" id="1">   1   </a>
+				<a class="large white button" onclick="press('2');" id="2">   2   </a>
+				<a class="large white button" onclick="press('3');" id="3">   3   </a>
+
+			</div>
+			<div class="wall-of-buttons">
+				<a class="large white button" onclick="press('4');" id="4">   4   </a>
+				<a class="large white button" onclick="press('5');" id="5">   5   </a>
+				<a class="large white button" onclick="press('6');" id="6">   6   </a>
+
+			</div>
+			<div class="wall-of-buttons">
+				<a class="large white button" onclick="press('7');" id="7">   7   </a>
+				<a class="large white button" onclick="press('8');" id="8">   8   </a>
+				<a class="large white button" onclick="press('9');" id="9">   9   </a>
+			</div>
+			<div class="wall-of-buttons">
+				<a class="large white button" onclick="press('*');" id="*">   *   </a>
+				<a class="large white button" onclick="press('0');" id="0">   0   </a>
+				<a class="large white button" onclick="press('#');" id="#">   #   </a>
+			</div>
+			<h2></h2>
+			<div class="wall-of-buttons">
+				<a class="large green button" onclick="pressfun('accept');" id="accept">  拨打    </a>
+				<a class="large red button" onclick="pressfun('hung');" id="hung">   挂断   </a>
+			</div>
+			<h2><div align="center"><textarea rows="2"  id="textarea_cmd" style="width:90%;height:100px;"></textarea></div></h2>
+		</div>
+		<h2><div align="center" id="device_online" ></div></h2>
+		<h2><div align="center" id="device_ADC" ></div></h2>
+
+<!--命令输入-->
+		<h2><div align="center"><input type="text" onkeydown="keydown(event)" class="text" id="cmdsend" list="dataListForSelect" style="width:90%;height:50px;"/></div></h2>
+        <h2><div align="center"><button onclick="sendcmd();" style="width:30%;height:40px;">发送</button></div></h2>
+        <h2><div align="center" id="ID" >ID:0000000000 </div><div align="center" id="msg" >created by miuser</div></h2>
+
+		<style type="text/css">input.text{text-align:center;padding:10px 20px;width:90%;}</style>
+		<!--备选命令-->
+		<datalist id="dataListForSelect">
+            <option value="TTSPLUS,小伙伴欢迎你的加入，让我们一起做一部属于自己的个性电话机。" />
+            <option value="2812DISPLAY,YAP Yet it is another phone" />
+		</datalist>
+
+
+
+        
+
+
+
+</body>
+<script>
+    var socket;
+    var TTL=0;
+    var remoteSWStatus
+	//接收到的消息
+	var rsvMsg="";
+
+    var heart="";
+
+    var remotetime="";
+
+    var dialnumber=""
+
+    function keydown(e) {
+        if (e.keyCode == 13) {
+            var cmd=$("#cmdsend").val();
+            Send_Cmd(cmd+"\r\n");
+        }
+    }
+	function cleartext()
+	{
+	    $("#cmdsend").val("");
+	}
+
+	function sendcmd()
+	{
+	    var cmd=$("#cmdsend").val();
+	    Send_Cmd(cmd+"\r\n");
+	}
+
+	function press(button)
+	{
+		if (dialnumber!="YAP CONTROLLER")
+		{
+			dialnumber=dialnumber+button;
+		}else
+		{
+			dialnumber=button;
+		}
+		$("#hh").html(dialnumber)
+		SetMPanel(button,"large red button");
+		Send_Cmd("press,"+button+"\r\n");
+		setTimeout(function(){SetMPanel(button,"large white button");}, 300);
+	}
+
+	function pressfun(button)
+	{
+		if (button=="hung")
+		{
+			dialnumber="YAP CONTROLLER";
+			Send_Cmd("HUNGUP,"+"\r\n");
+		}
+		if (button=="accept")
+		{
+			if ((dialnumber=="")||(dialnumber=="YAP CONTROLLER"))
+			{
+				Send_Cmd("ANSWERCALL"+"\r\n");
+
+			}else
+			{
+				Send_Cmd("DIAL,"+dialnumber+"\r\n");
+			}
+		}
+		$("#hh").html(dialnumber)
+		Send_Cmd("press,"+button+"\r\n");
+	}
+
+
+	window.onload = function(){
+        try{
+            connect();
+            var ID=getUrlParam("ID");
+            $("#ID").html("ID:"+ID);
+            document.getElementsByTagName("title")[0].innerText = "YAP ID:"+ID;
+        }
+        catch(ex){}
+    }
+    window.onbeforeunload = function() {
+        try {
+            socket.close();
+            socket = null;
+        } catch(ex) {}
+    };
+	//从URL参数栏取得参数
+    function getUrlParam(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r!=null) return decodeURI(r[2]); return null; //返回参数值
+    }
+    //连接websocket
+    function connect() {
+        var host = "ws://box.miuser.net:9000/";
+        socket = new ReconnectingWebSocket(host);
+        try {
+            socket.onopen = function(msg) {
+                //alert("连接成功！");
+                $("#msg").html("服务器连接成功");
+                OnlineNotify();
+            };
+            socket.onmessage = function(s) {
+                TTL=600;
+
+                ProceedRawMessage(s);
+
+            };
+            socket.onclose = function(msg) {
+                //alert("socket closed!")
+                $("#msg").html("伺服器连接异常");
+            };
+        } catch(ex) {
+            log(ex);
+        }
+    }
+    //计算中文字符数
+    function Chineselen(str){
+        var len = 0;
+        for (var i=0; i<str.length; i++) {
+            var c = str.charCodeAt(i);
+            //单字节加1
+            if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+            }
+            else {
+                len+=1;
+            }
+        }
+        return len;
+    }
+
+    function ProceedRawMessage(rsv)
+	{
+        var respond=rsv.data.toString();
+        //包类型
+        var paktype=respond.substring(6,7);
+        //消息来源
+        var source=respond.substring(7,9);
+        //包长度
+        var len=parseInt(respond.substring(0,4));
+        //中文字符数，因为js把中文当1个字符，而设备当做2个字符
+        var cnLen=Chineselen(respond);
+        //包正文
+        var content=respond.substring(39,len-cnLen-cnLen-2);
+        //开关控件
+        var sw=document.getElementById("toggle--knob")
+
+        if (source==="01")
+        {
+            if (paktype=="B") {
+                heart=$.parseJSON( content );
+                if (!(heart.hasOwnProperty("RSSI"))) return;
+                remotetime=heart.TIME;
+                if (heart.P13==1)
+				{
+                    sw.checked = false;
+                    SetMPanel("P13","large green button");
+				    $("#online").html("开关状态：打开");
+
+                }else
+				{
+                    sw.checked == true;
+                    SetMPanel("P13","large red button");
+				    $("#online").html("开关状态：关闭");
+                }
+                // if (heart.OUTPUT === 1) SetMPanel("OUTPUT","large green button"); else SetMPanel("OUTPUT","large red button");
+                // if (heart.VOUT === 1) SetMPanel("VOUT","large green button"); else SetMPanel("VOUT","large red button");
+                // if (heart.BTN === 1) SetMPanel("BTN","large green button"); else SetMPanel("BTN","large red button");
+                //$("#device_online").html("设备正常，信号强度为"+((heart.RSSI/30)*100).toFixed(0)+"%"+"，"+"设备时间为"+remotetime.hour+":"+remotetime.min+":"+remotetime.sec);
+				$("#online").html("信号强度："+((heart.RSSI/30)*100).toFixed(0)+"%"+"  ("+remotetime.hour+":"+remotetime.min+":"+remotetime.sec+")  ");
+                //$("#device_ADC").html("设备测量端口电压为"+heart.ADCVOL+"毫伏");
+
+            }
+
+            if((paktype=="C")||(paktype=="A"))
+            {
+                var now = new Date();
+                rsvMsg="RECV"+"["+ ("0"+now.getHours()).substr(-2)+":"+("0"+now.getMinutes()).substr(-2)+":"+("0"+now.getSeconds()).substr(-2)+"]"+content+rsvMsg;
+                //if (rsvMsg.length>1000) rsvMsg=rsvMsg.substr(-1000);
+                var rsvtext=document.getElementById("textarea_cmd");
+                rsvtext.value=rsvMsg;
+                if (content.search("GPIOLEVEL,13,1")>=0) 				
+                {
+                    SetMPanel("P13","large green button");
+				    $("#online").html("开关状态：打开");
+
+                }
+                if (content.search("GPIOLEVEL,13,0")>=0) 		
+				{
+                    SetMPanel("P13","large red button");
+				    $("#online").html("开关状态：关闭");
+                }
+            }
+
+        }
+	}
+
+    function SetMPanel(panel,panelclass )
+	{
+        document.getElementById(panel).setAttribute("class", panelclass);
+	}
+
+    function OnlineNotify() {
+        var now = new Date();
+        Send_HeartBeat("Cat1 phone board is online @"+("0" + now.getHours()).substr(-2) + ":" + ("0" + now.getMinutes()).substr(-2) + ":" + ("0" + now.getSeconds()).substr(-2)+"\r\n")
+    }
+    setInterval("OnlineNotify()",5000);
+
+    function OnlineDetect() {
+        if (TTL>0)
+		{
+            $("#device_online").html("设备在线");
+        }else
+		{
+            $("#device_online").html("设备离线");
+		}
+		TTL=TTL-1;
+
+    }
+    setInterval("OnlineDetect()",1000);
+	//发送心跳
+    function Send_HeartBeat(msg)
+	{
+	    SendRaw(msg,"B")
+	}
+	//透传命令
+    function Send_Cmd(cmd)
+    {
+        SendRaw(cmd,"A")
+    }
+    //发送消息
+    function Send_Message(msg)
+    {
+        SendRaw(msg,"C")
+    }
+
+    //按照命令类型发送一个数据包
+    function SendRaw(msg,datatype)
+    {
+        var ID=getUrlParam("ID");
+        var MM=getUrlParam("MM");
+		//消息版本
+        var ver="01";
+        //来源为浏览器
+        var source="08";
+
+		var package=ver+datatype+source+ID+MM+"1234"+msg+"05";
+		var packlen=package.length+Chineselen(package);
+		packlenstr="00"+(packlen+4);
+        packlenstr=packlenstr.substr(-4);
+		package=packlenstr+package;
+        socket.send(package);
+        var now = new Date();
+
+        if (datatype=="C"||datatype=="A")
+        {
+            rsvMsg = "SEND" + "[" + ("0" + now.getHours()).substr(-2) + ":" + ("0" + now.getMinutes()).substr(-2) + ":" + ("0" + now.getSeconds()).substr(-2) + "]" + msg + rsvMsg;
+            var rsvtext = document.getElementById("textarea_cmd");
+            rsvtext.value = rsvMsg;
+        }
+    }
+
+
+
+
+
+
+	//发送指令，同步开关状态  
+	function setSwitch()
+	{
+	    	//设备不在线则不发送
+	    	if (TTL<0) return;
+	    	//sw是反向的，true 是 关闭，false 是打开
+            var sw=document.getElementById("toggle--knob")
+
+
+			if ((sw.checked === true) &&(remoteSWStatus!="OFF"))
+			{
+                Send_Cmd("SETGPIO,13,0\r\n");
+            }
+            else if ((sw.checked === false) &&(remoteSWStatus!="ON"))
+			{
+
+                Send_Cmd("SETGPIO,13,1\r\n");
+            }else
+			{
+                if (remoteSWStatus=="ON")
+				{
+				    //$("#online").html("开关状态：打开");
+
+                }
+                if (remoteSWStatus=="OFF")
+				{
+				    //$("#online").html("开关状态：关闭");
+                }
+			}
+	}
+
+</script>
+</html>

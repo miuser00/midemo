@@ -1,0 +1,10 @@
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\bin\Debug\zxing.dll
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\obj\Debug\ESP8266_COMReader.Form1.resources
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\obj\Debug\LabelPrinter.csproj.GenerateResource.Cache
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\bin\Debug\MTJMCNLabelPrinter.exe.config
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\bin\Debug\MTJMCNLabelPrinter.exe
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\bin\Debug\MTJMCNLabelPrinter.pdb
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\obj\Debug\LabelPrinter.csprojResolveAssemblyReference.cache
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\obj\Debug\MTJMCNLabelPrinter.Properties.Resources.resources
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\obj\Debug\MTJMCNLabelPrinter.exe
+C:\Users\miuser\OneDrive\project\GPRSModule\LabelPrinter\LabelPrinter\obj\Debug\MTJMCNLabelPrinter.pdb
